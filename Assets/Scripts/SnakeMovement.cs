@@ -57,6 +57,21 @@ public class Move : MonoBehaviour {
                 }
                 break;
         }
+            case 3: //MOVE-SE PELO MOUSE E TODOS MOVIMENTOS SÃO POR ROTEÇÃO
+                float scalarSpeed = 2.5f;
+                Vector3 mousePostion = Input.mousePosition;
+                transform.Translate(Vector3.forward * Time.deltaTime * velocity);
+
+                float deltaX = (mousePostion.x - Screen.width / 2) / Screen.width / 2;
+                float deltaY = (mousePostion.y - Screen.width / 2) / Screen.width / 2;
+
+                transform.Rotate(Vector3.left * Time.deltaTime * rotateVelocity*deltaY * scalarSpeed);
+
+                transform.Rotate(Vector3.up * Time.deltaTime * rotateVelocity * deltaX  * scalarSpeed);
+                
+                break;
+        }
+
 
         /*
         if(Input.GetAxis("Mouse Y")!=0)
