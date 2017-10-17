@@ -5,11 +5,13 @@ public class SnakeMovement : MonoBehaviour {
     public int option=1;
     public SpawnFood food;
 
+	//static Vector3 init_pos = Vector3(0.0, 0.0, -3.0);
+
+	float rotateVelocity = 90;
+	float velocity = 2;
+
     void Update ()
     {
-        float rotateVelocity = 90;
-        float velocity = 2;
-
         transform.Translate(Vector3.forward * Time.deltaTime * velocity);
         switch (option)
         {
@@ -61,6 +63,13 @@ public class SnakeMovement : MonoBehaviour {
                 
                 break;
         }
+
+		if (Data.isAlive()==false && Input.GetKey (KeyCode.Space)) { // ressuscitar/reiniciar
+			rotateVelocity = 90;
+			velocity = 2;
+			Data.rise ();
+			// reposicionar
+		}
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -68,10 +77,14 @@ public class SnakeMovement : MonoBehaviour {
         if (collision.gameObject.tag == "normalFood")
         {
             //ganha ponto
+			Data.addPoints(30); // exemplo
          
         } else if (collision.gameObject.tag == "wall")
         {
-            //perde jogo
+			rotateVelocity = 0;
+			velocity = 0;
+			Data.died();
+
         }
         //if(collision.gameObject.tag == "specialFood")
         //if(collision.gameObject.tag == "rottenFood")
