@@ -1,25 +1,19 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Move : MonoBehaviour {
-    public int option;
+public class SnakeMovement : MonoBehaviour {
+    public int option=1;
+    public SpawnFood food;
 
-    // Use this for initialization
-    void Start () {
-
-        Screen.lockCursor = true;
-    }
-	
-	// Update is called once per frame
-	void Update ()
+    void Update ()
     {
         float rotateVelocity = 90;
         float velocity = 2;
+
+        transform.Translate(Vector3.forward * Time.deltaTime * velocity);
         switch (option)
         {
             case 1: //MOVE-SE PELO TECLADO E SUBIDA E DECIDA SÃO REALIZADAS POR TRANSIÇÕES, SEM ROTECIONAR
-                transform.Translate(Vector3.forward * Time.deltaTime * velocity);
                 if (Input.GetKey(KeyCode.W))
                 {
                     transform.Translate(Vector3.up * Time.deltaTime * velocity);
@@ -38,7 +32,6 @@ public class Move : MonoBehaviour {
                 }
                 break;
             case 2: //MOVE-SE PELO TECLADO E TODOS MOVIMENTOS SÃO POR ROTEÇÃO
-                transform.Translate(Vector3.forward * Time.deltaTime * velocity);
                 if (Input.GetKey(KeyCode.D))
                 {
                     transform.Rotate(Vector3.up * Time.deltaTime * rotateVelocity);
@@ -56,38 +49,31 @@ public class Move : MonoBehaviour {
                     transform.Rotate(Vector3.left * Time.deltaTime * rotateVelocity);
                 }
                 break;
-        }
             case 3: //MOVE-SE PELO MOUSE E TODOS MOVIMENTOS SÃO POR ROTEÇÃO
                 float scalarSpeed = 2.5f;
                 Vector3 mousePostion = Input.mousePosition;
-                transform.Translate(Vector3.forward * Time.deltaTime * velocity);
 
                 float deltaX = (mousePostion.x - Screen.width / 2) / Screen.width / 2;
                 float deltaY = (mousePostion.y - Screen.width / 2) / Screen.width / 2;
 
                 transform.Rotate(Vector3.left * Time.deltaTime * rotateVelocity*deltaY * scalarSpeed);
-
                 transform.Rotate(Vector3.up * Time.deltaTime * rotateVelocity * deltaX  * scalarSpeed);
                 
                 break;
         }
+    }
 
-
-        /*
-        if(Input.GetAxis("Mouse Y")!=0)
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "normalFood")
         {
-            transform.Rotate(new Vector3(0, Input.GetAxis("Mouse X"), 0) * Time.deltaTime * rotateVelocity);
+            //ganha ponto
+         
+        } else if (collision.gameObject.tag == "wall")
+        {
+            //perde jogo
         }
-        */
-        /*
-        else
-        if (Input.mousePosition.x > Screen.width - 10)
-            transform.Rotate(new Vector3(0, 1, 0) * Time.deltaTime * rotateVelocity);
-        else
-        if (Input.mousePosition.x < 10)
-            transform.Rotate(new Vector3(0, -1, 0) * Time.deltaTime * rotateVelocity);
-        */
-
-
+        //if(collision.gameObject.tag == "specialFood")
+        //if(collision.gameObject.tag == "rottenFood")
     }
 }
