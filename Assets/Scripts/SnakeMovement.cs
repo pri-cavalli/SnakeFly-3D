@@ -2,17 +2,74 @@
 using UnityEngine;
 
 public class SnakeMovement : MonoBehaviour {
-    public int option=1;
+    public int option=2;
     public SpawnFood food;
 
 	//static Vector3 init_pos = Vector3(0.0, 0.0, -3.0);
 
-	float rotateVelocity = 90;
+	float rotateVelocity = 180;
 	float velocity = 2;
 
-    void Update ()
+	private float inTime = 0.9f;   // fator para velocidade de rotacao: quanto maior, mais lenta serah a rotacao (funcao RotateMe)
+	private bool waitMove = false; // evitar rotacao maior do que 90 ao pressionar "demais" a tecla 
+
+	//******************************************************
+
+	void Start(){
+		
+	}
+
+	void Update () {
+		transform.Translate(Vector3.forward * Time.deltaTime * velocity);
+		Rotate90 ();
+	}
+
+
+	void Rotate90() 
+	{
+		if (Input.GetKey(KeyCode.DownArrow))
+		{
+			StartCoroutine (RotateMe (Vector3.right * 90));
+		}
+		if (Input.GetKey(KeyCode.UpArrow))
+		{
+			StartCoroutine (RotateMe (Vector3.left * 90));
+		}
+		if (Input.GetKey(KeyCode.LeftArrow))
+		{
+			StartCoroutine (RotateMe (Vector3.down * 90));
+		}
+		if (Input.GetKey(KeyCode.RightArrow))
+		{
+			StartCoroutine (RotateMe (Vector3.up * 90));
+		}
+
+		RiseUp ();
+	}
+
+	IEnumerator RotateMe(Vector3 byAngles)
+	{
+		if(!waitMove)
+		{
+			waitMove = true;
+
+			var fromAngle = transform.rotation;
+			var toAngle = Quaternion.Euler (transform.eulerAngles + byAngles);
+
+			for (var t = 0f; t <= 1; t += Time.deltaTime / inTime) 
+			{
+				transform.rotation = Quaternion.Slerp (fromAngle, toAngle, t);
+				yield return null;
+			}
+
+			waitMove = false;
+		}
+	}
+
+
+    void OriginalMove ()
     {
-        transform.Translate(Vector3.forward * Time.deltaTime * velocity);
+        transform.Translate(Vector3.forward * Time.deltaTime * velocity); 
         switch (option)
         {
             case 1: //MOVE-SE PELO TECLADO E SUBIDA E DECIDA SÃO REALIZADAS POR TRANSIÇÕES, SEM ROTECIONAR
@@ -34,21 +91,22 @@ public class SnakeMovement : MonoBehaviour {
                 }
                 break;
             case 2: //MOVE-SE PELO TECLADO E TODOS MOVIMENTOS SÃO POR ROTEÇÃO
+			    
                 if (Input.GetKey(KeyCode.D))
                 {
-                    transform.Rotate(Vector3.up * Time.deltaTime * rotateVelocity);
+					transform.Rotate(Vector3.up * Time.deltaTime * rotateVelocity);
                 }
                 if (Input.GetKey(KeyCode.A))
                 {
-                    transform.Rotate(Vector3.down * Time.deltaTime * rotateVelocity);
+					transform.Rotate(Vector3.down * Time.deltaTime * rotateVelocity);
                 }
                 if (Input.GetKey(KeyCode.S))
                 {
-                    transform.Rotate(Vector3.right * Time.deltaTime * rotateVelocity);
+					transform.Rotate(Vector3.right * Time.deltaTime * rotateVelocity);
                 }
                 if (Input.GetKey(KeyCode.W))
                 {
-                    transform.Rotate(Vector3.left * Time.deltaTime * rotateVelocity);
+					transform.Rotate(Vector3.left * Time.deltaTime * rotateVelocity);
                 }
                 break;
             case 3: //MOVE-SE PELO MOUSE E TODOS MOVIMENTOS SÃO POR ROTEÇÃO
@@ -64,13 +122,9 @@ public class SnakeMovement : MonoBehaviour {
                 break;
         }
 
-		if (Data.isAlive()==false && Input.GetKey (KeyCode.Space)) { // ressuscitar/reiniciar
-			rotateVelocity = 90;
-			velocity = 2;
-			Data.rise ();
-			// reposicionar
-		}
+		RiseUp ();
     }
+		
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -79,14 +133,24 @@ public class SnakeMovement : MonoBehaviour {
             //ganha ponto
 			Data.addPoints(30); // exemplo
          
-        } else if (collision.gameObject.tag == "wall")
+		} else if (collision.gameObject.tag == "wall")
         {
 			rotateVelocity = 0;
 			velocity = 0;
 			Data.died();
-
         }
         //if(collision.gameObject.tag == "specialFood")
         //if(collision.gameObject.tag == "rottenFood")
     }
+
+
+	void RiseUp() // teste
+	{
+		if (Data.isAlive()==false && Input.GetKey (KeyCode.Space)) { // ressuscitar/reiniciar
+			rotateVelocity = 90;
+			velocity = 2;
+			Data.rise ();
+			// reposicionar
+		}
+	}
 }
