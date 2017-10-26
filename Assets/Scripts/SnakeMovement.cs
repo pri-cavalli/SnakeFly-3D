@@ -11,7 +11,8 @@ public class SnakeMovement : MonoBehaviour {
 	float velocity = 2;
 
 	private float inTime = 0.9f;   // fator para velocidade de rotacao: quanto maior, mais lenta serah a rotacao (funcao RotateMe)
-	private bool waitMove = false; // evitar rotacao maior do que 90 ao pressionar "demais" a tecla 
+    private bool waitMove = false; // evitar rotacao maior do que 90 ao pressionar "demais" a tecla 
+    private bool snakeAlive = true; // flag to check if the snake is alive, when true snkae is alive 
 
 	//******************************************************
 
@@ -19,12 +20,91 @@ public class SnakeMovement : MonoBehaviour {
 		
 	}
 
-	void Update () {
-		transform.Translate(Vector3.forward * Time.deltaTime * velocity);
-		Rotate90 ();
-	}
+    void Update () {
+        if(snakeAlive){             
+            transform.Translate(Vector3.forward * Time.deltaTime * velocity);
+    		switch (option)
+            {
+                    case 1: //MOVE-SE PELO TECLADO E SUBIDA E DECIDA SÃO REALIZADAS POR TRANSIÇÕES, SEM ROTECIONAR
+                    if (Input.GetKey(KeyCode.W))
+                    {
+                        transform.Translate(Vector3.up * Time.deltaTime * velocity);
+                    }
+                    if (Input.GetKey(KeyCode.S))
+                    {
+                        transform.Translate(Vector3.down * Time.deltaTime * velocity);
+                    }
+                    if (Input.GetKey(KeyCode.D))
+                        {
+                        transform.Rotate(Vector3.up * Time.deltaTime * rotateVelocity);
+                    }
+                    if (Input.GetKey(KeyCode.A))
+                    {
+                        transform.Rotate(Vector3.down * Time.deltaTime * rotateVelocity);
+                    }
+                    break;
+                case 2: //MOVE-SE PELO TECLADO E TODOS MOVIMENTOS SÃO POR ROTEÇÃO
+                    
+                    if (Input.GetKey(KeyCode.D))
+                    {
+                        transform.Rotate(Vector3.up * Time.deltaTime * rotateVelocity);
+                    }
+                    if (Input.GetKey(KeyCode.A))
+                    {
+                        transform.Rotate(Vector3.down * Time.deltaTime * rotateVelocity);
+                    }
+                    if (Input.GetKey(KeyCode.S))
+                    {
+                        transform.Rotate(Vector3.right * Time.deltaTime * rotateVelocity);
+                    }
+                    if (Input.GetKey(KeyCode.W))
+                    {
+                        transform.Rotate(Vector3.left * Time.deltaTime * rotateVelocity);
+                    }
+                    break;
+                case 3: //MOVE-SE PELO MOUSE E TODOS MOVIMENTOS SÃO POR ROTEÇÃO
+                    float scalarSpeed = 2.5f;
+                    Vector3 mousePostion = Input.mousePosition;
 
+                    float deltaX = (mousePostion.x - Screen.width / 2) / Screen.width / 2;
+                    float deltaY = (mousePostion.y - Screen.width / 2) / Screen.width / 2;
 
+                    transform.Rotate(Vector3.left * Time.deltaTime * rotateVelocity*deltaY * scalarSpeed);
+                    transform.Rotate(Vector3.up * Time.deltaTime * rotateVelocity * deltaX  * scalarSpeed);
+                    
+                    break;
+                case 4:
+                    Rotate90 ();
+                    break;        
+            }
+
+            RiseUp ();
+
+            this.changeMoveConfig();
+        }
+
+       
+    }
+
+    void changeMoveConfig()
+    {
+        if (Input.GetKey(KeyCode.Alpha1))
+        {
+            this.option = 1;
+        }
+        else if (Input.GetKey(KeyCode.Alpha2))
+        {
+            this.option = 2;
+        }
+        else if (Input.GetKey(KeyCode.Alpha3))
+        {
+            this.option = 3;
+        }
+        else if (Input.GetKey(KeyCode.Alpha4))
+        {
+            this.option = 4;
+        }
+    }
 	void Rotate90() 
 	{
 		if (Input.GetKey(KeyCode.DownArrow))
@@ -44,7 +124,7 @@ public class SnakeMovement : MonoBehaviour {
 			StartCoroutine (RotateMe (Vector3.up * 90));
 		}
 
-		RiseUp ();
+		//RiseUp (); //já esta no outro 
 	}
 
 	IEnumerator RotateMe(Vector3 byAngles)
