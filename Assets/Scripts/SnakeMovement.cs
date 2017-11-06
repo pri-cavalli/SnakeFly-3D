@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public class SnakeMovement : MonoBehaviour {
-    public int option;
+    public int option = 2;
     public SpawnFood food;
 
 	//static Vector3 init_pos = Vector3(0.0, 0.0, -3.0);
@@ -15,7 +15,7 @@ public class SnakeMovement : MonoBehaviour {
     private bool snakeAlive = true; // flag to check if the snake is alive, when true snkae is alive 
 	private bool pause = false;
 
-	int numParts; // contar o tamanho da cobra
+    int numParts; // contar o tamanho da cobra
 
 	public Color[] palette = new Color[]{ Color.white }; // paleta de cores para as novas partes da cobra, nao sei se tah funcionando!
 
@@ -24,13 +24,13 @@ public class SnakeMovement : MonoBehaviour {
 	void Start(){
 		pause = false;
 		snakeAlive = true;
-		option = 2;
-		numParts = 2;
+		numParts = 1;
 	}
 
     void Update () {
-		if(snakeAlive && !pause){             
+		if(snakeAlive && !pause){
             //transform.Translate(Vector3.forward * Time.deltaTime * velocity);
+            //moveSnake();
     		switch (option)
             {
                 case 1: //MOVE-SE PELO TECLADO E SUBIDA E DECIDA SÃO REALIZADAS POR TRANSIÇÕES, SEM ROTACIONAR
@@ -46,7 +46,6 @@ public class SnakeMovement : MonoBehaviour {
                     Rotate90 ();
                     break;        
             }
-
             this.changeMoveConfig();
         }
 
@@ -235,15 +234,18 @@ public class SnakeMovement : MonoBehaviour {
 
 	private void GrowUp()
 	{
-		GameObject snake = GameObject.Find ("Body1");
+		GameObject snake = GameObject.Find ("Body" + this.numParts.ToString());
 		float x = snake.transform.position.x;
 		float y = snake.transform.position.y;
 		float z = snake.transform.position.z;
-		print (this.transform.name +" , grow: body1 (x,y,z) = " + x + ", " + y + ", " + z);
+        
+        print (this.transform.name +" , grow: body1 (x,y,z) = " + x + ", " + y + ", " + z);
 
 		GameObject newBody = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		newBody.transform.SetParent(snake.transform);
-		newBody.transform.position = new Vector3 (x+1, y, z);
+		newBody.transform.position = new Vector3 (x, y, z);
+        newBody.transform.SetPositionAndRotation(snake.transform.position, snake.transform.rotation);
+        newBody.transform.Translate(Vector3.back);
 
 		Color color = Color.green;
 		newBody.GetComponent<Renderer> ().material.color = color;
@@ -270,5 +272,26 @@ public class SnakeMovement : MonoBehaviour {
 		}
 	}
 
+    private void moveSnake()
+    {
+
+        GameObject head;
+        GameObject tail;
+        for (int i =1; i<this.numParts -1; i++) { 
+            head = GameObject.Find("Body" + i.ToString());
+            tail = GameObject.Find("Body" + (i + 1).ToString());
+            tail.transform.SetPositionAndRotation(head.transform.position, head.transform.rotation);
+        }
+        GameObject snake = GameObject.Find("Body1");
+        snake.transform.Translate(Vector3.forward);
+
+
+        
+    }
+
+    private class arrayForMoveSnake
+    {
+
+    }
 
 }

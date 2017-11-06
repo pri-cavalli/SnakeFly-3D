@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.43667564, g: 0.48427147, b: 0.56452364, a: 1}
+  m_IndirectSpecularColor: {r: 0.43667555, g: 0.4842713, b: 0.5645231, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -816,7 +816,7 @@ GameObject:
   - component: {fileID: 1762572393}
   - component: {fileID: 1762572394}
   m_Layer: 0
-  m_Name: Snake
+  m_Name: Body1
   m_TagString: snake
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -898,8 +898,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 554230f7055f88d41abb9f9f9a1647fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  option: 2
+  option: 4
   food: {fileID: 0}
+  palette:
+  - {r: 1, g: 1, b: 1, a: 1}
 --- !u!54 &1762572394
 Rigidbody:
   m_ObjectHideFlags: 0
