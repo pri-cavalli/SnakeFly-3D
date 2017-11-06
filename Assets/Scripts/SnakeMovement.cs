@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class SnakeMovement : MonoBehaviour {
     public int option = 2;
@@ -15,6 +16,8 @@ public class SnakeMovement : MonoBehaviour {
     private bool snakeAlive = true; // flag to check if the snake is alive, when true snkae is alive 
 	private bool pause = false;
 
+    private ArrayForSnakeMoviment listOfPositions = new ArrayForSnakeMoviment(); 
+
     int numParts; // contar o tamanho da cobra
 
 	public Color[] palette = new Color[]{ Color.white }; // paleta de cores para as novas partes da cobra, nao sei se tah funcionando!
@@ -25,11 +28,13 @@ public class SnakeMovement : MonoBehaviour {
 		pause = false;
 		snakeAlive = true;
 		numParts = 1;
+        listOfPositions.addPart(new NodeForSnakeMoviment("Body1", transform.position, transform.rotation));
 	}
 
     void Update () {
+        print(this.listOfPositions.count());
 		if(snakeAlive && !pause){
-            //transform.Translate(Vector3.forward * Time.deltaTime * velocity);
+            transform.Translate(Vector3.forward * Time.deltaTime * velocity);
             //moveSnake();
     		switch (option)
             {
@@ -68,6 +73,7 @@ public class SnakeMovement : MonoBehaviour {
 
 	private void changeMoveConfig()
 	{
+
 		if (Input.GetKey(KeyCode.Alpha1))
 		{
 			this.option = 1;
@@ -243,7 +249,6 @@ public class SnakeMovement : MonoBehaviour {
 
 		GameObject newBody = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		newBody.transform.SetParent(snake.transform);
-		newBody.transform.position = new Vector3 (x, y, z);
         newBody.transform.SetPositionAndRotation(snake.transform.position, snake.transform.rotation);
         newBody.transform.Translate(Vector3.back);
 
@@ -276,21 +281,148 @@ public class SnakeMovement : MonoBehaviour {
     {
 
         GameObject head;
-        GameObject tail;
-        for (int i =1; i<this.numParts -1; i++) { 
+       
+        for (int i = 1; i<=this.numParts; i++) { 
             head = GameObject.Find("Body" + i.ToString());
-            tail = GameObject.Find("Body" + (i + 1).ToString());
-            tail.transform.SetPositionAndRotation(head.transform.position, head.transform.rotation);
+            head.transform.Translate(Vector3.forward * Time.deltaTime * velocity);
+            NodeForSnakeMoviment thisNode = new NodeForSnakeMoviment(head.name, head.transform.position, head.transform.rotation);
+            NodeForSnakeMoviment nextMove = this.listOfPositions.getNextMove(thisNode, "Body" + (i - 1).ToString());
+
+
+            if ( nextMove != null)
+            {
+                head.transform.rotation = nextMove.getRotation();
+                head.transform.position = nextMove.getPosition();
+                head.transform.Translate(Vector3.forward * Time.deltaTime * velocity);
+            }
+            thisNode = new NodeForSnakeMoviment(head.name, head.transform.position, head.transform.rotation);
+            this.listOfPositions.addPart(thisNode);
+            
         }
-        GameObject snake = GameObject.Find("Body1");
-        snake.transform.Translate(Vector3.forward);
+        
 
 
         
     }
 
-    private class arrayForMoveSnake
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private class NodeForSnakeMoviment
     {
+        string headName;
+        Vector3 position;
+        Quaternion rotation;
+        int count;
+      
+        public NodeForSnakeMoviment(string name, Vector3 position, Quaternion rotation)
+        {
+            
+            this.headName = name;
+            this.position = position;
+            this.rotation = rotation;
+            this.count = 10;
+        }
+        public string getName()
+        {
+            return this.headName;
+        }
+
+        public Vector3 getPosition()
+        {
+            return this.position;
+        }
+
+        public Quaternion getRotation()
+        {
+            return this.rotation;
+        }
+
+        public int getCount()
+        {
+            return this.count;
+        }
+
+        public void decCount()
+        {
+            this.count--;
+        }
+    }
+    private class ArrayForSnakeMoviment
+    {
+        private List<NodeForSnakeMoviment> arrayForMove;
+
+        public ArrayForSnakeMoviment()
+        {
+            this.arrayForMove = new List<NodeForSnakeMoviment>();
+        }
+
+        public int count()
+        {
+            return this.arrayForMove.Count;
+        }
+
+        public void addPart(NodeForSnakeMoviment newPart)
+        {
+            this.arrayForMove.Add(newPart);
+        }
+        public NodeForSnakeMoviment getNextMove(NodeForSnakeMoviment part, string partFatherName)
+        {
+            for (int i = 0; i < this.arrayForMove.Count; i++)
+            {
+                NodeForSnakeMoviment aux = this.arrayForMove[i];
+                if (aux.getName() == partFatherName)
+                {
+                    if (vectorsCloseEnough(aux.getPosition(), part.getPosition()))
+                    {
+                        NodeForSnakeMoviment x = new NodeForSnakeMoviment(aux.getName(), aux.getPosition(), aux.getRotation());
+                        if (!this.arrayForMove.Remove(aux))
+                        {
+                            print("ERRRO");
+                        }
+                        return x;
+                    }
+
+                }
+                if (aux.getCount() == 0)
+                {
+                    if(!this.arrayForMove.Remove(aux))
+                        {
+                        print("ERRRO");
+                    }
+                }
+                aux.decCount();
+            }
+            return null;
+        }
+
+        private bool vectorsCloseEnough(Vector3 v1, Vector3 v2)
+        {
+            float diff = Time.deltaTime * 2;
+            if(v1.x - v2.x > -diff && v1.x - v2.x < diff)
+            {
+                if (v1.y - v2.y > -diff && v1.y - v2.y < diff)
+                {
+                    if (v1.z - v2.z > -diff && v1.z - v2.z < diff)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
 
     }
 
