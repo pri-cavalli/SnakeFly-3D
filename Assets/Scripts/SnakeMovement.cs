@@ -20,6 +20,12 @@ public class SnakeMovement : MonoBehaviour {
 
     int numParts; // contar o tamanho da cobra
 
+
+    //********************************************************************
+    // For coding purposes ONLY
+    // If you wanna see the snake growing and moving like as an grown up snake set this attribute as true
+    private bool moveSnakeAsGrow = true;
+    //****************************************************************/
 	public Color[] palette = new Color[]{ Color.white }; // paleta de cores para as novas partes da cobra, nao sei se tah funcionando!
 
 	//******************************************************
@@ -32,10 +38,7 @@ public class SnakeMovement : MonoBehaviour {
 	}
 
     void Update () {
-        print(this.listOfPositions.count());
 		if(snakeAlive && !pause){
-            transform.Translate(Vector3.forward * Time.deltaTime * velocity);
-            //moveSnake();
     		switch (option)
             {
                 case 1: //MOVE-SE PELO TECLADO E SUBIDA E DECIDA SÃO REALIZADAS POR TRANSIÇÕES, SEM ROTACIONAR
@@ -52,6 +55,13 @@ public class SnakeMovement : MonoBehaviour {
                     break;        
             }
             this.changeMoveConfig();
+            if (moveSnakeAsGrow){
+                moveSnake();
+            }
+            else{
+                transform.Translate(Vector3.forward * Time.deltaTime * velocity);
+
+            }
         }
 
 		RiseUp ();
@@ -64,10 +74,10 @@ public class SnakeMovement : MonoBehaviour {
 				print ("PLAY");
 		}
 
-		if (Input.GetKey (KeyCode.G))
+		if (Input.GetKeyDown (KeyCode.G))
 			GrowUp ();
 
-		printPosition ();
+		//printPosition ();
     }
 	//---------------------------------------------------------------------------
 
@@ -224,7 +234,7 @@ public class SnakeMovement : MonoBehaviour {
         if (collision.gameObject.tag == "normalFood")
         {
             //ganha ponto
-			Data.addPoints(30); // exemplo
+			//Data.addPoints(30); // exemplo
 			GrowUp();
          
 		} else if (collision.gameObject.tag == "wall")
@@ -245,25 +255,31 @@ public class SnakeMovement : MonoBehaviour {
 		float y = snake.transform.position.y;
 		float z = snake.transform.position.z;
         
-        print (this.transform.name +" , grow: body1 (x,y,z) = " + x + ", " + y + ", " + z);
+        //  print (this.transform.name +" , grow: body1 (x,y,z) = " + x + ", " + y + ", " + z);
 
 		GameObject newBody = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-		newBody.transform.SetParent(snake.transform);
+        
+        if (!this.moveSnakeAsGrow) { 
+            newBody.transform.SetParent(snake.transform);
+        }
+        
+
+        
         newBody.transform.SetPositionAndRotation(snake.transform.position, snake.transform.rotation);
         newBody.transform.Translate(Vector3.back);
-
+        
 		Color color = Color.green;
 		newBody.GetComponent<Renderer> ().material.color = color;
 
 		numParts++;
 		newBody.name = "Body" + numParts;
 		newBody.transform.SetAsLastSibling ();
-
-		/*
+        //newBody.collid
+        /*
 		newBody.AddComponent<Animation>();
 		newBody.AddComponent<MeshFilter>();
 		newBody.AddComponent<MeshCollider> ();*/
-	}
+    }
 
 	private void printPosition()
 	{
@@ -281,23 +297,27 @@ public class SnakeMovement : MonoBehaviour {
     {
 
         GameObject head;
-       
+
+        float time = Time.deltaTime;
         for (int i = 1; i<=this.numParts; i++) { 
             head = GameObject.Find("Body" + i.ToString());
-            head.transform.Translate(Vector3.forward * Time.deltaTime * velocity);
             NodeForSnakeMoviment thisNode = new NodeForSnakeMoviment(head.name, head.transform.position, head.transform.rotation);
+                head.transform.Translate(Vector3.forward * time * velocity);
             NodeForSnakeMoviment nextMove = this.listOfPositions.getNextMove(thisNode, "Body" + (i - 1).ToString());
 
-
-            if ( nextMove != null)
+            //print(i + "origi" + head.transform.position);
+            if ( nextMove != null )
             {
+                //print(i + "Falas" + nextMove.getPosition());
+                
                 head.transform.rotation = nextMove.getRotation();
                 head.transform.position = nextMove.getPosition();
-                head.transform.Translate(Vector3.forward * Time.deltaTime * velocity);
+                this.listOfPositions.delete(nextMove);
             }
+            
             thisNode = new NodeForSnakeMoviment(head.name, head.transform.position, head.transform.rotation);
             this.listOfPositions.addPart(thisNode);
-            
+
         }
         
 
@@ -332,7 +352,7 @@ public class SnakeMovement : MonoBehaviour {
             this.headName = name;
             this.position = position;
             this.rotation = rotation;
-            this.count = 10;
+            this.count = 20;
         }
         public string getName()
         {
@@ -379,37 +399,80 @@ public class SnakeMovement : MonoBehaviour {
         }
         public NodeForSnakeMoviment getNextMove(NodeForSnakeMoviment part, string partFatherName)
         {
-            for (int i = 0; i < this.arrayForMove.Count; i++)
+            int minIndex = -1;
+            float minValue = 0, auxValue;
+            NodeForSnakeMoviment aux;
+            for (int i = this.arrayForMove.Count - 1; i >= 0; i--    )
             {
-                NodeForSnakeMoviment aux = this.arrayForMove[i];
+                aux = this.arrayForMove[i];
                 if (aux.getName() == partFatherName)
                 {
-                    if (vectorsCloseEnough(aux.getPosition(), part.getPosition()))
+                    auxValue = distVector(aux.getPosition(), part.getPosition());
+                    if (minIndex == -1 && auxValue <=1.0f)
                     {
-                        NodeForSnakeMoviment x = new NodeForSnakeMoviment(aux.getName(), aux.getPosition(), aux.getRotation());
-                        if (!this.arrayForMove.Remove(aux))
+                        minIndex = i;
+                        minValue = auxValue;
+                    }
+                    else
+                    {
+                        
+                        if (auxValue < minValue && auxValue <= 1.0f )
                         {
-                            print("ERRRO");
+                            minIndex = i;
+                            minValue = auxValue;
                         }
-                        return x;
+                        if(minValue == 2.0f)
+                        {
+                            print("SSSSSSSSSS");
+                            //return this.arrayForMove[minIndex];
+                        }
                     }
 
+
                 }
-                if (aux.getCount() == 0)
+                else if (aux.getCount() == 0)
                 {
-                    if(!this.arrayForMove.Remove(aux))
-                        {
+                    minIndex--;
+                    if (!this.arrayForMove.Remove(aux))
+                    {
                         print("ERRRO");
                     }
                 }
-                aux.decCount();
+                else
+                {
+
+                    aux.decCount();
+                }
             }
-            return null;
+            if(minIndex <= -1)
+            {
+                return null;
+
+            }
+            else
+            {
+                //print("foiiiiiiiiiiiiiiiiii " + this.arrayForMove[minIndex].getPosition());
+                //print(minIndex);
+                //print("max "  + this.arrayForMove.Count);
+                return this.arrayForMove[minIndex];
+            }
+        }
+
+        public void delete(NodeForSnakeMoviment x)
+        {
+            this.arrayForMove.Remove(x);
+        }
+        private float distVector(Vector3 v1, Vector3 v2)
+        {
+            //print("V1: " + v1+ " v2: " +  v2);
+            return Mathf.Sqrt(Mathf.Pow((v1.x - v2.x), 2) + Mathf.Pow((v1.y - v2.y), 2) + Mathf.Pow((v1.z - v2.z), 2));
         }
 
         private bool vectorsCloseEnough(Vector3 v1, Vector3 v2)
         {
-            float diff = Time.deltaTime * 2;
+            print("V1: " + v1);
+            print("v2: " + v2);
+            float diff = 0.05f;
             if(v1.x - v2.x > -diff && v1.x - v2.x < diff)
             {
                 if (v1.y - v2.y > -diff && v1.y - v2.y < diff)
