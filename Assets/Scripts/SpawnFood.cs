@@ -1,19 +1,26 @@
 ﻿using UnityEngine;
 
 public class SpawnFood : MonoBehaviour {
-    public GameObject Foodprefab;
-    public float size=26;
+    private float sizeX, sizeZ;
+
 
     void Start ()
     {
-        transform.position = new Vector3(Random.Range(-size / 2, size / 2), Random.Range(-size / 2, size / 2), Random.Range(-size / 2, size / 2));
+        sizeX = 30f;
+        sizeZ = 20f;
+        changePos();
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider collision)
     {
-        if (collision.gameObject.tag == "snake")
+        if (collision.gameObject.tag == "head")
         {
-            transform.position = new Vector3(Random.Range(-size / 2, size / 2), Random.Range(-size / 2, size / 2), Random.Range(-size / 2, size / 2)); 
+            changePos();
         }
+    }
+
+    private void changePos()
+    {
+        transform.position = new Vector3(Random.Range(-1 * sizeX / 2, sizeX / 2), 2f, Random.Range(-1 * sizeZ / 2, sizeZ / 2));
     }
 }

@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Data.cs" />
+    <Compile Include="Assets\Scripts\snake.cs" />
     <Compile Include="Assets\Scripts\SnakeMovement.cs" />
     <Compile Include="Assets\Scripts\SpawnFood.cs" />
   </ItemGroup>
