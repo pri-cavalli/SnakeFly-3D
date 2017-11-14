@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 //https://unity3d.com/pt/learn/tutorials/projects/roll-ball-tutorial/displaying-score-and-text
 public class snake : MonoBehaviour
 {
@@ -44,6 +46,14 @@ public class snake : MonoBehaviour
         // 1=> começou a subir
         // 2=> no ápice do pulo
         // 3=> começou a descer
+        // 4=> no chão
+
+    //points
+    private int point;
+
+    //texts
+    public Text scoreText;
+    public Text lostText;
 
 
     // Use this for initialization
@@ -52,11 +62,16 @@ public class snake : MonoBehaviour
         numParts = 1;
         x = y = 0;
         z = 1;
-        tempo = 0.4f;
+        tempo = 0.3f;
         currentMoviment = "pZ";
         moviments = new List<string>();
 
-        cooldown = 30;
+        point = 0;
+        setScoreText();
+
+        lostText.text = "";
+
+        cooldown = 5;
         currentCooldown = 0;
         setCanJump();
         StartCoroutine(moviment());
@@ -156,79 +171,94 @@ public class snake : MonoBehaviour
         }
     }
 
+    private void attPositions()
+    {
+
+        if (moviments.Count != 0)
+        {
+            currentMoviment = moviments[moviments.Count - 1];
+            moviments.RemoveAt(moviments.Count - 1);
+        }
+
+        switch (currentMoviment)
+        {
+            case "pX":
+                x++;
+                break;
+            case "nX":
+                x--;
+                break;
+            case "pZ":
+                z++;
+                break;
+            case "nZ":
+                z--;
+                break;
+            default:
+                break;
+        }
+    }
+
     private IEnumerator moviment()
     {
-        while (true)
+        while (snakeAlive)
         {
             yield return new WaitForSeconds(tempo);
             bx = x;
             by = y;
             bz = z;
-
-            if (moviments.Count != 0)
-            {
-                currentMoviment = moviments[moviments.Count - 1];
-                moviments.RemoveAt(moviments.Count - 1);
-            }
+            createBody(bx, by, bz);
 
             currentCooldown--;
             setCanJump();
-
-            switch (currentMoviment)
-            {
-                case "pX":
-                    x++;
-                    break;
-                case "nX":
-                    x--;
-                    break;
-                case "pZ":
-                    z++;
-                    break;
-                case "nZ":
-                    z--;
-                    break;
-                default:
-                    break;
-            }
-
             switch(jumpSituation)
             {
                 case 0:
                     y = 0f;
+                    attPositions();
                     break;
                 case 1:
                     jumpSituation = 2;
-                    y = 0.8f;
+                    y = 1.1f;
                     break;
                 case 2:
                     jumpSituation = 3;
-                    y = 1.8f;
+                    attPositions();
                     break;
                 case 3:
+                    jumpSituation = 4;
+                    attPositions();
+                    break;
+                case 4:
                     jumpSituation = 0;
-                    y = 0.8f;
+                    y = 0f;
                     break;
                 default:
                     break;
             }
 
-            transform.LookAt(new Vector3(x, y, z));
+            transform.LookAt(new Vector3(x, 0, z));
             transform.position = new Vector3(x, y, z);
             yield return new WaitForSeconds(0.001f);
-
-
-            //Instantiate(newHead, new Vector3(x, y, z), Quaternion.identity);
-            GameObject body = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            body.transform.position = new Vector3(bx, by - 0.1f, bz);
-            body.transform.localScale = new Vector3(0.6f, 0.6f, 0.6f);
-            body.tag = "body";
-            body.GetComponent<Renderer>().material = rend;
-            Destroy(body, tempo * numParts);
-            body.AddComponent<Rigidbody>();
-            body.GetComponent<Rigidbody>().useGravity = false;
-            //body.attachedRigidbody.useGravity = false;
         }
+    }
+
+    private void createBody(float bodyX, float bodyY, float bodyZ)
+    {
+        GameObject body = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        body.transform.position = new Vector3(bodyX, bodyY, bodyZ);
+        body.transform.localScale = new Vector3(0.95f, 1f, 0.95f);
+        body.tag = "body";
+        body.GetComponent<Renderer>().material = rend;
+        Destroy(body, tempo * numParts);
+        body.AddComponent<Rigidbody>();
+        body.GetComponent<Rigidbody>().useGravity = false;
+
+    }
+
+    private void setScoreText()
+    {
+        scoreText.text = "Score: " + point.ToString();
     }
 
     private void OnTriggerEnter(Collider collision)
@@ -237,12 +267,16 @@ public class snake : MonoBehaviour
         if (collision.gameObject.tag == "normalFood")
         {
             numParts++;
+            point++;
+            setScoreText();
         }
         else if (collision.gameObject.tag == "wall" || collision.gameObject.tag == "body")
         {
-            Application.LoadLevel(Application.loadedLevel);
+            Debug.Log(new Vector3 (bx, by, bz));
+            Debug.Log(new Vector3(x, y, z));
+            lostText.text = "You lost!\nScore: " + scoreText.ToString();
+            velocity = 0;
+            snakeAlive = false;
         }
-        //if(collision.gameObject.tag == "specialFood")
-        //if(collision.gameObject.tag == "rottenFood")
     }
 }

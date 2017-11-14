@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 
 public class SpawnFood : MonoBehaviour {
     private float sizeX, sizeZ;
@@ -21,6 +22,9 @@ public class SpawnFood : MonoBehaviour {
 
     private void changePos()
     {
-        transform.position = new Vector3(Random.Range(-1 * sizeX / 2, sizeX / 2), 2f, Random.Range(-1 * sizeZ / 2, sizeZ / 2));
+        transform.position = new Vector3(
+            UnityEngine.Random.Range( (float)Math.Floor((-1 * sizeX / 2)+1), (float)Math.Floor(sizeX / 2) ),
+            2f,
+            UnityEngine.Random.Range((float)Math.Floor(-1 * sizeZ / 2) + 1, (float)Math.Floor(sizeZ / 2) ));
     }
 }
