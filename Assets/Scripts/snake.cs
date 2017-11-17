@@ -53,8 +53,6 @@ public class snake : MonoBehaviour
 
     //texts
     public Text scoreText;
-    public Text lostText;
-
 
     // Use this for initialization
     void Start()
@@ -64,14 +62,13 @@ public class snake : MonoBehaviour
         z = 1;
         tempo = 0.3f;
         currentMoviment = "pZ";
+        numParts = 4;
         moviments = new List<string>();
 
         point = 0;
         setScoreText();
 
-        lostText.text = "";
-
-        cooldown = 5;
+        cooldown = 35;
         currentCooldown = 0;
         setCanJump();
         StartCoroutine(moviment());
@@ -203,11 +200,19 @@ public class snake : MonoBehaviour
     {
         while (snakeAlive)
         {
-            yield return new WaitForSeconds(tempo);
             bx = x;
             by = y;
             bz = z;
-            createBody(bx, by, bz);
+            GameObject body = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            body.transform.position = new Vector3(bx, by, bz);
+            body.transform.localScale = new Vector3(0.9f, 1f, 0.9f);
+            body.tag = "body";
+            body.GetComponent<Renderer>().material = rend;
+            Destroy(body, tempo * numParts);
+
+
+            yield return new WaitForSeconds(tempo);
+            setScoreText();
 
             currentCooldown--;
             setCanJump();
@@ -239,44 +244,36 @@ public class snake : MonoBehaviour
 
             transform.LookAt(new Vector3(x, 0, z));
             transform.position = new Vector3(x, y, z);
-            yield return new WaitForSeconds(0.001f);
+            body.AddComponent<Rigidbody>();
+            body.GetComponent<Rigidbody>().useGravity = false;
         }
-    }
-
-    private void createBody(float bodyX, float bodyY, float bodyZ)
-    {
-        GameObject body = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        body.transform.position = new Vector3(bodyX, bodyY, bodyZ);
-        body.transform.localScale = new Vector3(0.95f, 1f, 0.95f);
-        body.tag = "body";
-        body.GetComponent<Renderer>().material = rend;
-        Destroy(body, tempo * numParts);
-        body.AddComponent<Rigidbody>();
-        body.GetComponent<Rigidbody>().useGravity = false;
-
     }
 
     private void setScoreText()
     {
-        scoreText.text = "Score: " + point.ToString();
+        string message = "Score: " + point.ToString() + "\n";
+        if (currentCooldown <= 0 )
+        {
+            message += "Jump is enable!";
+        } else
+        {
+            message += "Jump cooldown: " + currentCooldown.ToString();
+        }
+        scoreText.text = message;
     }
 
     private void OnTriggerEnter(Collider collision)
     {
-        Debug.Log("colidiu " + collision.gameObject.tag);
         if (collision.gameObject.tag == "normalFood")
         {
             numParts++;
             point++;
-            setScoreText();
         }
         else if (collision.gameObject.tag == "wall" || collision.gameObject.tag == "body")
         {
-            Debug.Log(new Vector3 (bx, by, bz));
-            Debug.Log(new Vector3(x, y, z));
-            lostText.text = "You lost!\nScore: " + scoreText.ToString();
             velocity = 0;
             snakeAlive = false;
+            Application.LoadLevel(3);
         }
     }
 }

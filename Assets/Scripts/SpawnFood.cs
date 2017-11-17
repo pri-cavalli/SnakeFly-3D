@@ -7,7 +7,7 @@ public class SpawnFood : MonoBehaviour {
 
     void Start ()
     {
-        sizeX = 30f;
+        sizeX = 20f;
         sizeZ = 20f;
         changePos();
     }
@@ -22,9 +22,11 @@ public class SpawnFood : MonoBehaviour {
 
     private void changePos()
     {
-        transform.position = new Vector3(
-            UnityEngine.Random.Range( (float)Math.Floor((-1 * sizeX / 2)+1), (float)Math.Floor(sizeX / 2) ),
-            2f,
-            UnityEngine.Random.Range((float)Math.Floor(-1 * sizeZ / 2) + 1, (float)Math.Floor(sizeZ / 2) ));
+        Vector3 newPosition = new Vector3(
+            UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeX / 2) + 1f, (float)Math.Floor(sizeX / 2)-1f ),
+            -0.2f,
+            UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeZ / 2) + 1f, (float)Math.Floor(sizeZ / 2)-1f )
+       );
+        transform.position = newPosition;
     }
 }
