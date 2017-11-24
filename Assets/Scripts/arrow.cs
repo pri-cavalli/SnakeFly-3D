@@ -11,9 +11,8 @@ public class arrow : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
-        apple = GameObject.FindWithTag("normalFood");
+        apple = GameObject.FindWithTag("apple");
         lookApplePosition();
-        //transform.Rotate(new Vector3(180, 180, 180));
     }
 	
 	// Update is called once per frame
@@ -25,7 +24,6 @@ public class arrow : MonoBehaviour {
     private void lookApplePosition()
     {
         var targetPosition = apple.transform.position;
-        //targetPosition = Quaternion.Euler(180, 180, 180) * targetPosition;
         transform.LookAt(targetPosition);
     }
 }
