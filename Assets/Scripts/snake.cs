@@ -9,7 +9,7 @@ public class snake : MonoBehaviour
     public int velocity = 2;
     private bool snakeAlive = true;
     private int numParts;
-    private float tempo;
+    private float time;
 
     //directions
     private bool pX = false; //positive x
@@ -38,14 +38,24 @@ public class snake : MonoBehaviour
     public Material rend;
 
     //jump
-    public int cooldown;
-    private int currentCooldown;
+    public int cooldownJump;
+    private int currentCooldownJump;
     private bool canJump;
     private int jumpSituation;
-        // 0=> no chão
         // 1=> começou a subir
         // 2=> no ápice do pulo
         // 3=> começou a descer
+        // 4=> no chão
+
+
+    //dive
+    public int cooldownDive;
+    private int currentCooldownDive;
+    private bool canDive;
+    private int diveSituation;
+        // 1=> começou a descer
+        // 2=> no ápice do mergulho
+        // 3=> começou a subir
         // 4=> no chão
 
     //points
@@ -57,10 +67,9 @@ public class snake : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        numParts = 1;
         x = y = 0;
         z = 1;
-        tempo = 0.3f;
+        time = 0.8f;
         currentMoviment = "pZ";
         numParts = 4;
         moviments = new List<string>();
@@ -68,9 +77,11 @@ public class snake : MonoBehaviour
         point = 0;
         setScoreText();
 
-        cooldown = 35;
-        currentCooldown = 0;
+        //cooldownJump = cooldownDive = 35;
+        cooldownJump = cooldownDive = 1;
+        currentCooldownJump = currentCooldownDive = 0;
         setCanJump();
+        setCanDive();
         StartCoroutine(moviment());
     }
 
@@ -87,24 +98,37 @@ public class snake : MonoBehaviour
             {
                 moviments.Insert(0, keyA());
             }
-            if (Input.GetKeyDown(KeyCode.S)) // S cava
+            if (Input.GetKeyDown(KeyCode.S) && canDive) // S mergulha
             {
-                numParts++;
+                currentCooldownDive = cooldownDive;
+                diveSituation = 1;
             }
             if (Input.GetKeyDown(KeyCode.W) && canJump) // W pula
             {
-                currentCooldown = cooldown;
+                currentCooldownJump = cooldownJump;
                 jumpSituation = 1;
+            }
+            if (Input.GetKeyDown(KeyCode.G)) // GROW => FOR DEV
+            {
+                numParts += 5;
             }
         }
     }
 
     private void setCanJump()
     {
-        if (currentCooldown < 0)
+        if (currentCooldownJump < 0)
             canJump = true;
         else
             canJump = false;
+    }
+
+    private void setCanDive()
+    {
+        if (currentCooldownDive < 0)
+            canDive = true;
+        else
+            canDive = false;
     }
 
     private string keyD()
@@ -208,38 +232,67 @@ public class snake : MonoBehaviour
             body.transform.localScale = new Vector3(0.9f, 1f, 0.9f);
             body.tag = "body";
             body.GetComponent<Renderer>().material = rend;
-            Destroy(body, tempo * numParts);
+            Destroy(body, time * numParts);
 
 
-            yield return new WaitForSeconds(tempo);
+            yield return new WaitForSeconds(time);
             setScoreText();
 
-            currentCooldown--;
+            currentCooldownJump--;
             setCanJump();
-            switch(jumpSituation)
+            currentCooldownDive--;
+            setCanDive();
+
+            if (jumpSituation != 0)
             {
-                case 0:
-                    y = 0f;
-                    attPositions();
-                    break;
-                case 1:
-                    jumpSituation = 2;
-                    y = 1.1f;
-                    break;
-                case 2:
-                    jumpSituation = 3;
-                    attPositions();
-                    break;
-                case 3:
-                    jumpSituation = 4;
-                    attPositions();
-                    break;
-                case 4:
-                    jumpSituation = 0;
-                    y = 0f;
-                    break;
-                default:
-                    break;
+                switch (jumpSituation)
+                {
+                    case 1:
+                        jumpSituation = 2;
+                        y = 1.1f;
+                        break;
+                    case 2:
+                        jumpSituation = 3;
+                        attPositions();
+                        break;
+                    case 3:
+                        jumpSituation = 4;
+                        attPositions();
+                        break;
+                    case 4:
+                        jumpSituation = 0;
+                        y = 0f;
+                        break;
+                    default:
+                        break;
+                }
+
+            } else if (diveSituation != 0)
+            {
+                switch (diveSituation)
+                {
+                    case 1:
+                        diveSituation = 2;
+                        y = -1.1f;
+                        break;
+                    case 2:
+                        diveSituation = 3;
+                        attPositions();
+                        break;
+                    case 3:
+                        diveSituation = 4;
+                        attPositions();
+                        break;
+                    case 4:
+                        diveSituation = 0;
+                        y = 0f;
+                        break;
+                    default:
+                        break;
+                }
+            } else
+            {
+                attPositions();
             }
 
             transform.LookAt(new Vector3(x, 0, z));
@@ -252,22 +305,34 @@ public class snake : MonoBehaviour
     private void setScoreText()
     {
         string message = "Score: " + point.ToString() + "\n";
-        if (currentCooldown <= 0 )
+        if (currentCooldownJump <= 0 )
         {
-            message += "Jump is enable!";
+            message += "Jump is enable!\n";
         } else
         {
-            message += "Jump cooldown: " + currentCooldown.ToString();
+            message += "Jump cooldown: " + currentCooldownJump.ToString() + "\n";
+        }
+        if (currentCooldownDive <= 0)
+        {
+            message += "Dive is enable!";
+        }
+        else
+        {
+            message += "Dive cooldown: " + currentCooldownDive.ToString();
         }
         scoreText.text = message;
     }
 
     private void OnTriggerEnter(Collider collision)
     {
-        if (collision.gameObject.tag == "normalFood")
+        if (collision.gameObject.tag == "apple")
         {
-            numParts++;
-            point++;
+            numParts+=2;
+            point+=2;
+        } else if (collision.gameObject.tag == "star")
+        {
+            numParts += 3;
+            point += 10;
         }
         else if (collision.gameObject.tag == "wall" || collision.gameObject.tag == "body")
         {
