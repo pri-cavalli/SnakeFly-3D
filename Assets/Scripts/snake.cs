@@ -64,6 +64,11 @@ public class snake : MonoBehaviour
     //texts
     public Text scoreText;
 
+    //sounds
+    public AudioClip bite;
+    public AudioClip getStar;
+    AudioSource audioSource;
+
     // Use this for initialization
     void Start()
     {
@@ -76,6 +81,10 @@ public class snake : MonoBehaviour
 
         point = 0;
         setScoreText();
+
+        audioSource = GetComponent<AudioSource>();
+        //GetComponent<AudioSource>().playOnAwake = false;
+        // GetComponent<AudioSource>().clip = bite;
 
         //cooldownJump = cooldownDive = 35;
         cooldownJump = cooldownDive = 1;
@@ -327,10 +336,12 @@ public class snake : MonoBehaviour
     {
         if (collision.gameObject.tag == "apple")
         {
-            numParts+=2;
+            audioSource.PlayOneShot(bite, 1f);
+            numParts +=2;
             point+=2;
         } else if (collision.gameObject.tag == "star")
         {
+            audioSource.PlayOneShot(getStar, 1f);
             numParts += 3;
             point += 10;
         }
