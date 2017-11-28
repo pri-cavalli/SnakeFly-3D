@@ -8,8 +8,8 @@ public class appleSpawn : MonoBehaviour
 
     void Start()
     {
-        sizeX = 20f;
-        sizeZ = 20f;
+        sizeX = 20;
+        sizeZ = 20;
         changePos();
     }
 
@@ -29,5 +29,9 @@ public class appleSpawn : MonoBehaviour
             UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeZ / 2) + 1f, (float)Math.Floor(sizeZ / 2) - 1f)
        );
         transform.position = newPosition;
+        if ( transform.GetComponent<Collider>().gameObject.tag == "head" || transform.GetComponent<Collider>().gameObject.tag == "body")
+        {
+            this.changePos();   
+        }
     }
 }

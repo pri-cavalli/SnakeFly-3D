@@ -349,7 +349,45 @@ public class snake : MonoBehaviour
         {
             velocity = 0;
             snakeAlive = false;
+            saveScoreToLostScene();
             Application.LoadLevel(3);
         }
+    }
+
+    private void saveScoreToLostScene()
+    {
+        if (System.IO.File.Exists("tempFileForSavingScore.txt"))
+        {
+            System.IO.File.Delete("tempFileForSavingScore.txt");
+        }
+        System.IO.File.WriteAllText("tempFileForSavingScore.txt", this.point.ToString());
+
+        if (System.IO.File.Exists("highScores.txt"))
+        {
+            string highScore = System.IO.File.ReadAllText("highScores.txt");
+            int highScoreVal;
+            try
+            {
+                highScoreVal = int.Parse(highScore);
+            }
+            catch
+            {
+                highScoreVal = 0;
+                System.IO.File.Delete("highScores.txt");
+                System.IO.File.WriteAllText("highScores.txt", highScoreVal.ToString());
+            }
+
+            if (highScoreVal < this.point)
+            {
+                System.IO.File.Delete("highScores.txt");
+                System.IO.File.WriteAllText("highScores.txt", this.point.ToString());
+            }
+
+        }
+        else
+        {
+            System.IO.File.WriteAllText("highScores.txt", this.point.ToString());
+        }
+
     }
 }
