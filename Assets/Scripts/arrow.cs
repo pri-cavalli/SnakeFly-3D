@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class arrow : MonoBehaviour {
 
+    [Range(0, 1)] public float alpha;
     private GameObject apple;
     private Quaternion targetRotation;
 
@@ -24,6 +25,7 @@ public class arrow : MonoBehaviour {
     private void lookApplePosition()
     {
         var targetPosition = apple.transform.position;
-        transform.LookAt(targetPosition);
+        //transform.LookAt(targetPosition);
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(targetPosition - transform.position, Vector3.up), alpha);
     }
 }

@@ -10,6 +10,11 @@ public class snake : MonoBehaviour
     private bool snakeAlive = true;
     private int numParts;
     private float time;
+    public float startTime = 0.8f;
+    public float minTime = 0.1f;
+    public int difficultyStep = 10;
+    public AnimationCurve difficulty = AnimationCurve.Linear(0, 0, 1, 1);
+    private float currentDifficulty = 0;
 
     //directions
     private bool pX = false; //positive x
@@ -42,7 +47,7 @@ public class snake : MonoBehaviour
     public Material rend;
 
     //jump
-    public int cooldownJump;
+    public int cooldownJump = 1;
     private int currentCooldownJump;
     private bool canJump;
     private int jumpSituation;
@@ -53,7 +58,7 @@ public class snake : MonoBehaviour
 
 
     //dive
-    public int cooldownDive;
+    public int cooldownDive = 1;
     private int currentCooldownDive;
     private bool canDive;
     private int diveSituation;
@@ -67,6 +72,8 @@ public class snake : MonoBehaviour
 
     //texts
     public Text scoreText;
+    public Outline jumpOutline, diveOutline;
+    public Text jumpText, diveText;
 
     //sounds
     public AudioClip bite;
@@ -78,7 +85,7 @@ public class snake : MonoBehaviour
     {
         x = y = 0;
         z = 1;
-        time = 0.8f;
+        time = startTime;
         currentMoviment = "pZ";
         numParts = 4;
         moviments = new List<string>();
@@ -92,9 +99,6 @@ public class snake : MonoBehaviour
         //GetComponent<AudioSource>().playOnAwake = false;
         // GetComponent<AudioSource>().clip = bite;
 
-        //cooldownJump = cooldownDive = 35;
-        cooldownJump = cooldownDive = 1;
-        currentCooldownJump = currentCooldownDive = 0;
         setCanJump();
         setCanDive();
         StartCoroutine(moviment());
@@ -186,6 +190,9 @@ public class snake : MonoBehaviour
                 numParts += 5;
             }
 #endif
+        } else
+        {
+            Application.LoadLevel(3);
         }
     }
 
@@ -323,6 +330,7 @@ public class snake : MonoBehaviour
                 {
                     case 1:
                         jumpSituation = 2;
+                        attPositions();
                         y = 1.1f;
                         break;
                     case 2:
@@ -335,6 +343,7 @@ public class snake : MonoBehaviour
                         break;
                     case 4:
                         jumpSituation = 0;
+                        attPositions();
                         y = 0f;
                         break;
                     default:
@@ -347,6 +356,7 @@ public class snake : MonoBehaviour
                 {
                     case 1:
                         diveSituation = 2;
+                        attPositions();
                         y = -1.1f;
                         break;
                     case 2:
@@ -359,6 +369,7 @@ public class snake : MonoBehaviour
                         break;
                     case 4:
                         diveSituation = 0;
+                        attPositions();
                         y = 0f;
                         break;
                     default:
@@ -378,23 +389,26 @@ public class snake : MonoBehaviour
 
     private void setScoreText()
     {
-        string message = "Score: " + point.ToString() + "\n";
+        scoreText.text = point.ToString();
         if (currentCooldownJump <= 0 )
         {
-            message += "Jump is enable!\n";
+            jumpOutline.effectColor = Color.green;
+            jumpText.text = "JUMP";
         } else
         {
-            message += "Jump cooldown: " + currentCooldownJump.ToString() + "\n";
+            jumpOutline.effectColor = Color.red;
+            jumpText.text = "JUMP: " + currentCooldownJump.ToString();
         }
         if (currentCooldownDive <= 0)
         {
-            message += "Dive is enable!";
+            diveOutline.effectColor = Color.green;
+            diveText.text = "DIVE";
         }
         else
         {
-            message += "Dive cooldown: " + currentCooldownDive.ToString();
+            diveOutline.effectColor = Color.red;
+            diveText.text = "DIVE: " + currentCooldownDive.ToString();
         }
-        scoreText.text = message;
     }
 
     private void OnTriggerEnter(Collider collision)
@@ -404,6 +418,10 @@ public class snake : MonoBehaviour
             audioSource.PlayOneShot(bite, 1f);
             numParts +=2;
             point+=2;
+            currentDifficulty += 1.0f / difficultyStep;
+            if (currentDifficulty > 1.0f)
+                currentDifficulty = 1.0f;
+            time = Mathf.Lerp(startTime, minTime, difficulty.Evaluate(currentDifficulty));
         } else if (collision.gameObject.tag == "star")
         {
             audioSource.PlayOneShot(getStar, 1f);
