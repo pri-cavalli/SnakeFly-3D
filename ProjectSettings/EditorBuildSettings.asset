@@ -17,3 +17,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/lost.unity
     guid: 5151595fd95d9be4ba0fb0357981704b
+  - enabled: 1
+    path: Assets/Scenes/menu-touch-intructions.unity
+    guid: f8bffc3bcd895d8409913e7582edfb8b

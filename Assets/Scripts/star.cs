@@ -6,11 +6,13 @@ using UnityEngine.UI;
 
 public class star : MonoBehaviour {
     private float time;
+    private float counterTime;
+    private float counting;
     private Vector3 outOfGame;
     private bool isInGame;
 
     private float sizeX, sizeZ;
-
+    
 
     //texts
     public Text text;
@@ -18,10 +20,12 @@ public class star : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
+        counterTime = 2f;
         time = 20f;
         sizeX = 20f;
         sizeZ = 20f;
         StartCoroutine(spawn());
+        StartCoroutine(counter());
         outOfGame = new Vector3(9999f, 9999f, 9999f);
         isInGame = false;
         text.text = "";
@@ -51,26 +55,38 @@ public class star : MonoBehaviour {
             string message = "";
 
             yield return new WaitForSeconds(time);
-            Debug.Log("isInGame" + isInGame.ToString());
             if (isInGame)
             {
-                Debug.Log("sai" + outOfGame.ToString());
                 transform.position = outOfGame;
                 isInGame = false;
                 message = "";
 
             }
-            else if (UnityEngine.Random.Range(0, 10) <= 8)
+            else if (UnityEngine.Random.Range(0, 10) == 1)
             {
-                message = "Star is at the game!\n";
+                counting = time;
                 isInGame = true;
                 Vector3 newPosition = new Vector3(
                     UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeX / 2) + 1f, (float)Math.Floor(sizeX / 2) - 1f),
                     1.2f,
                     UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeZ / 2) + 1f, (float)Math.Floor(sizeZ / 2) - 1f)
                 );
-                Debug.Log("foi" + newPosition.ToString());
                 transform.position = newPosition;
+            }
+        }
+    }
+
+    private IEnumerator counter()
+    {
+        while (true)
+        {
+
+            yield return new WaitForSeconds(counterTime);
+            string message = "";
+            if (isInGame)
+            {
+                counting--;
+                message = counting.ToString();
             }
             text.text = message;
         }

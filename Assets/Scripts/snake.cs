@@ -426,7 +426,7 @@ public class snake : MonoBehaviour
         {
             audioSource.PlayOneShot(getStar, 1f);
             numParts += 3;
-            point += 10;
+            point += 7;
         }
         else if (collision.gameObject.tag == "wall" || collision.gameObject.tag == "body")
         {
