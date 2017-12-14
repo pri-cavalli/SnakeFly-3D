@@ -4,6 +4,9 @@ public class LoadOnClick : MonoBehaviour
 {
     public void LoadScene(int level)
     {
+		if (level == -1) {
+			Application.Quit ();
+		}
 #if UNITY_ANDROID
         if (level == 2)
         {
