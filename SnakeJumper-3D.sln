@@ -1,7 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnakeJumper-3D", "Assembly-CSharp.csproj", "{DAD7C621-30E5-3841-590D-579C5530BC56}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnakeJumper-3D", "SnakeJumper-3D.csproj", "{6721C7D7-9305-648F-15D9-EB9FADF0B428}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,15 +9,12 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DAD7C621-30E5-3841-590D-579C5530BC56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DAD7C621-30E5-3841-590D-579C5530BC56}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DAD7C621-30E5-3841-590D-579C5530BC56}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DAD7C621-30E5-3841-590D-579C5530BC56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6721C7D7-9305-648F-15D9-EB9FADF0B428}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6721C7D7-9305-648F-15D9-EB9FADF0B428}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6721C7D7-9305-648F-15D9-EB9FADF0B428}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6721C7D7-9305-648F-15D9-EB9FADF0B428}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Assembly-CSharp.csproj
 	EndGlobalSection
 EndGlobal
