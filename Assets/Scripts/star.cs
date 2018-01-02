@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
 using System;
-using UnityEngine;
 using UnityEngine.UI;
 
 public class star : MonoBehaviour {
@@ -65,9 +64,9 @@ public class star : MonoBehaviour {
                 message = "Star is at the game!\n";
                 isInGame = true;
                 Vector3 newPosition = new Vector3(
-                    UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeX / 2) + 1f, (float)Math.Floor(sizeX / 2) - 1f),
+					(float)Math.Floor(UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeX / 2) + 1f, (float)Math.Floor(sizeX / 2) - 1f)),
                     1.2f,
-                    UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeZ / 2) + 1f, (float)Math.Floor(sizeZ / 2) - 1f)
+					(float)Math.Floor(UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeZ / 2) + 1f, (float)Math.Floor(sizeZ / 2) - 1f))
                 );
                 Debug.Log("foi" + newPosition.ToString());
                 transform.position = newPosition;
