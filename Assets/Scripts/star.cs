@@ -16,6 +16,7 @@ public class star : MonoBehaviour {
 
     //texts
     public Text text;
+	private int probability = 8;
 
     // Use this for initialization
     void Start ()
@@ -62,14 +63,14 @@ public class star : MonoBehaviour {
                 message = "";
 
             }
-            else if (UnityEngine.Random.Range(0, 10) == 1)
+			else if (UnityEngine.Random.Range(0, 10) <= probability)
             {
                 counting = time;
                 isInGame = true;
                 Vector3 newPosition = new Vector3(
-                    UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeX / 2) + 1f, (float)Math.Floor(sizeX / 2) - 1f),
+					(float)Math.Floor(UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeX / 2) + 1f, (float)Math.Floor(sizeX / 2) - 1f)),
                     1.2f,
-                    UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeZ / 2) + 1f, (float)Math.Floor(sizeZ / 2) - 1f)
+					(float)Math.Floor(UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeZ / 2) + 1f, (float)Math.Floor(sizeZ / 2) - 1f))
                 );
                 transform.position = newPosition;
             }
