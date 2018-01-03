@@ -78,6 +78,7 @@ public class snake : MonoBehaviour
     //sounds
     public AudioClip bite;
     public AudioClip getStar;
+	public AudioClip gulp;
     AudioSource audioSource;
 
     // Use this for initialization
@@ -436,7 +437,11 @@ public class snake : MonoBehaviour
     {
         if (collision.gameObject.tag == "apple")
         {
-            audioSource.PlayOneShot(bite, 1f);
+			if(appleSpawn.eatsBadApple)
+            	audioSource.PlayOneShot(gulp, 1f);
+			else
+				audioSource.PlayOneShot(bite, 1f);
+			
             numParts +=2;
             point+=2;
             currentDifficulty += 1.0f / difficultyStep;
