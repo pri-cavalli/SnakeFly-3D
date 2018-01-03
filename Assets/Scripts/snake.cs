@@ -79,7 +79,11 @@ public class snake : MonoBehaviour
     public AudioClip bite;
     public AudioClip getStar;
 	public AudioClip gulp;
-    AudioSource audioSource;
+    public AudioSource audioSource;
+
+	public AudioClip music;
+	public AudioClip lacucaracha;
+	private bool badMusicIsPlaying;
 
     // Use this for initialization
     void Start()
@@ -97,6 +101,11 @@ public class snake : MonoBehaviour
         dragDistance = Screen.height * 15 / 100; //dragDistance is 15% height of the screen
 
         audioSource = GetComponent<AudioSource>();
+		audioSource.clip = music;
+		audioSource.Play ();
+
+		badMusicIsPlaying = false;
+
         //GetComponent<AudioSource>().playOnAwake = false;
         // GetComponent<AudioSource>().clip = bite;
 
@@ -437,18 +446,36 @@ public class snake : MonoBehaviour
     {
         if (collision.gameObject.tag == "apple")
         {
-			if(appleSpawn.eatsBadApple)
-            	audioSource.PlayOneShot(gulp, 1f);
-			else
+			if (appleSpawn.eatsBadApple) 
+			{
+				audioSource.Stop ();
+				audioSource.clip = lacucaracha;
+				audioSource.Play();
+				badMusicIsPlaying = true;
+
+				audioSource.PlayOneShot (gulp, 1f);
+			} 
+			else 
+			{
+				if (badMusicIsPlaying) 
+				{
+					audioSource.Stop ();
+					audioSource.clip = music;
+					audioSource.Play();
+					badMusicIsPlaying = false;
+				}
+
 				audioSource.PlayOneShot(bite, 1f);
-			
+			}
+				
             numParts +=2;
             point+=2;
             currentDifficulty += 1.0f / difficultyStep;
             if (currentDifficulty > 1.0f)
                 currentDifficulty = 1.0f;
             time = Mathf.Lerp(startTime, minTime, difficulty.Evaluate(currentDifficulty));
-        } else if (collision.gameObject.tag == "star")
+        } 
+		else if (collision.gameObject.tag == "star")
         {
             audioSource.PlayOneShot(getStar, 1f);
             numParts += 3;

@@ -3459,7 +3459,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 95acacaca43bb0a408555546ee3adf14, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 0.68
   m_Pitch: 1
@@ -3517,7 +3517,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -3595,6 +3595,10 @@ MonoBehaviour:
   diveText: {fileID: 885679202}
   bite: {fileID: 8300000, guid: e1e5e241a505a744d991a586405b57b8, type: 3}
   getStar: {fileID: 8300000, guid: c148744f043a53b4bb294d119c1fe288, type: 3}
+  gulp: {fileID: 8300000, guid: c70656639178a844b90eb1e4eca84899, type: 3}
+  audioSource: {fileID: 2028524488}
+  music: {fileID: 8300000, guid: 95acacaca43bb0a408555546ee3adf14, type: 3}
+  lacucaracha: {fileID: 8300000, guid: 6528ecc9b11e0584e95a587c3e045a5c, type: 3}
 --- !u!23 &2044195795
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3716,7 +3720,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
