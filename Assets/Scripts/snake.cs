@@ -167,23 +167,33 @@ public class snake : MonoBehaviour
         }
 
 #else
-            if (Input.GetKeyDown(KeyCode.D)) // D direita
+			if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow) ) // D direita
             {
-               moviments.Insert(0, keyD());
+				if (!appleSpawn.eatsBadApple)
+               		moviments.Insert(0, keyD());
+				else
+					moviments.Insert(0, keyA());
             }
-            else if (Input.GetKeyDown(KeyCode.A)) // A esquerda
+			else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow) ) // A esquerda
             {
-                moviments.Insert(0, keyA());
+				if (!appleSpawn.eatsBadApple)
+                	moviments.Insert(0, keyA());
+				else
+					moviments.Insert(0, keyD());
             }
-            if (Input.GetKeyDown(KeyCode.S) && canDive) // S mergulha
+			if ( (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))  && canDive) // S mergulha
             {
-                currentCooldownDive = cooldownDive;
-                diveSituation = 1;
+				if (!appleSpawn.eatsBadApple)
+					MoveDown();
+				else
+					MoveUp();
             }
-            if (Input.GetKeyDown(KeyCode.W) && canJump) // W pula
+			if ( (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && canJump) // W pula
             {
-                currentCooldownJump = cooldownJump;
-                jumpSituation = 1;
+				if (!appleSpawn.eatsBadApple)
+					MoveUp();
+				else
+					MoveDown();
             }
             if (Input.GetKeyDown(KeyCode.G)) // GROW => FOR DEV
             {
@@ -195,6 +205,19 @@ public class snake : MonoBehaviour
             Application.LoadLevel(3);
         }
     }
+
+
+	private void MoveDown()
+	{
+		currentCooldownDive = cooldownDive;
+		diveSituation = 1;
+	}
+
+	private void MoveUp()
+	{
+		currentCooldownJump = cooldownJump;
+		jumpSituation = 1;
+	}
 
     private void setCanJump()
     {
@@ -275,7 +298,6 @@ public class snake : MonoBehaviour
 
     private void attPositions()
     {
-
         if (moviments.Count != 0)
         {
             currentMoviment = moviments[moviments.Count - 1];
@@ -284,18 +306,18 @@ public class snake : MonoBehaviour
 
         switch (currentMoviment)
         {
-            case "pX":
-                x++;
+			case "pX":
+	            x++;
                 break;
             case "nX":
-                x--;
+				x--;
                 break;
             case "pZ":
-                z++;
+				z++;
                 break;
             case "nZ":
-                z--;
-                break;
+				z--;
+				break;
             default:
                 break;
         }
@@ -314,7 +336,6 @@ public class snake : MonoBehaviour
             body.tag = "body";
             body.GetComponent<Renderer>().material = rend;
             Destroy(body, time * numParts);
-
 
             yield return new WaitForSeconds(time);
             setScoreText();
