@@ -3,31 +3,33 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class star : MonoBehaviour {
+public class star : MonoBehaviour
+{
     private float time;
     private float counterTime;
     private float counting;
     private Vector3 outOfGame;
     private bool isInGame;
+    private int lastShowed;
 
     private float sizeX, sizeZ;
-    
+    public snake snake;
+
+    private int probability = 24; //a cada quantos pontos aparece a estrela
 
     //texts
     public Text text;
-	private int probability = 8;
 
     // Use this for initialization
     void Start ()
     {
-        counterTime = 2f;
+        counterTime = 1f;
         time = 20f;
         sizeX = 20f;
         sizeZ = 20f;
-        StartCoroutine(spawn());
-        StartCoroutine(counter());
         outOfGame = new Vector3(9999f, 9999f, 9999f);
         isInGame = false;
+        lastShowed = 0;
         text.text = "";
 
         transform.position = outOfGame;
@@ -36,6 +38,21 @@ public class star : MonoBehaviour {
     private void Update()
     {
         transform.Rotate(Vector3.up * Time.deltaTime * 15);
+
+        if (snake.point != lastShowed && (snake.point % probability == 0) && !isInGame)
+        {
+            lastShowed = snake.point;
+            counting = time;
+            isInGame = true;
+            Vector3 newPosition = new Vector3(
+                (float)Math.Floor(UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeX / 2) + 1f, (float)Math.Floor(sizeX / 2) - 1f)),
+                1.2f,
+                (float)Math.Floor(UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeZ / 2) + 1f, (float)Math.Floor(sizeZ / 2) - 1f))
+            );
+            transform.position = newPosition;
+            StartCoroutine(spawn());
+            StartCoroutine(counter());
+        }
     }
 
     private void OnTriggerEnter(Collider collision)
@@ -50,45 +67,25 @@ public class star : MonoBehaviour {
 
     private IEnumerator spawn()
     {
-        while (true)
+        yield return new WaitForSeconds(time);
+        if (isInGame)
         {
-            string message = "";
-
-            yield return new WaitForSeconds(time);
-            if (isInGame)
-            {
-                transform.position = outOfGame;
-                isInGame = false;
-                message = "";
-
-            }
-			else if (UnityEngine.Random.Range(0, 10) <= probability)
-            {
-                counting = time;
-                isInGame = true;
-                Vector3 newPosition = new Vector3(
-					(float)Math.Floor(UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeX / 2) + 1f, (float)Math.Floor(sizeX / 2) - 1f)),
-                    1.2f,
-					(float)Math.Floor(UnityEngine.Random.Range(-1f * (float)Math.Floor(sizeZ / 2) + 1f, (float)Math.Floor(sizeZ / 2) - 1f))
-                );
-                transform.position = newPosition;
-            }
+            transform.position = outOfGame;
+            isInGame = false;
         }
     }
 
     private IEnumerator counter()
     {
-        while (true)
+        string message = "";
+        while (isInGame)
         {
-
             yield return new WaitForSeconds(counterTime);
-            string message = "";
-            if (isInGame)
-            {
-                counting--;
-                message = counting.ToString();
-            }
+            counting--;
+            message = counting.ToString();
             text.text = message;
         }
+        message = "";
+        text.text = message;
     }
 }

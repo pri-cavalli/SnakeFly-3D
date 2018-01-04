@@ -123,6 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e12817a641e9ef04e984c457b52a96b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  snake: {fileID: 2044195794}
   text: {fileID: 322063601}
 --- !u!65 &5964085
 BoxCollider:
@@ -284,7 +285,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 10, y: -6}
+  m_AnchoredPosition: {x: 15, y: -6}
   m_SizeDelta: {x: 400, y: 54.7}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &117531079
@@ -460,7 +461,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 322063599}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 40}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2028524487}
@@ -468,7 +469,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -165, y: -88}
+  m_AnchoredPosition: {x: 129, y: -88}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &322063601
@@ -492,10 +493,10 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 30
-    m_FontStyle: 0
+    m_FontSize: 40
+    m_FontStyle: 1
     m_BestFit: 0
-    m_MinSize: 3
+    m_MinSize: 0
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -3564,30 +3565,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocity: 2
-  startTime: 0.5
-  minTime: 0.13
-  difficultyStep: 15
-  difficulty:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 2
-      time: 0
-      value: 0
-      inSlope: 1
-      outSlope: 1
-      tangentMode: 0
-    - serializedVersion: 2
-      time: 1
-      value: 1
-      inSlope: 1
-      outSlope: 1
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 0
   rend: {fileID: 2100000, guid: ff9a93dc670ca414c9689295fcce5f0f, type: 2}
-  cooldownJump: 6
-  cooldownDive: 6
+  point: 0
   scoreText: {fileID: 117531079}
   jumpOutline: {fileID: 1522322513}
   diveOutline: {fileID: 885679201}
@@ -3596,7 +3575,6 @@ MonoBehaviour:
   bite: {fileID: 8300000, guid: e1e5e241a505a744d991a586405b57b8, type: 3}
   getStar: {fileID: 8300000, guid: c148744f043a53b4bb294d119c1fe288, type: 3}
   gulp: {fileID: 8300000, guid: c70656639178a844b90eb1e4eca84899, type: 3}
-  audioSource: {fileID: 2028524488}
   music: {fileID: 8300000, guid: 95acacaca43bb0a408555546ee3adf14, type: 3}
   lacucaracha: {fileID: 8300000, guid: 6528ecc9b11e0584e95a587c3e045a5c, type: 3}
 --- !u!23 &2044195795

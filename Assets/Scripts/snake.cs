@@ -10,11 +10,6 @@ public class snake : MonoBehaviour
     private bool snakeAlive = true;
     private int numParts;
     private float time;
-    public float startTime = 0.8f;
-    public float minTime = 0.1f;
-    public int difficultyStep = 10;
-    public AnimationCurve difficulty = AnimationCurve.Linear(0, 0, 1, 1);
-    private float currentDifficulty = 0;
 
     //directions
     private bool pX = false; //positive x
@@ -47,18 +42,18 @@ public class snake : MonoBehaviour
     public Material rend;
 
     //jump
-    public int cooldownJump = 1;
+    private int cooldownJump = 12;
     private int currentCooldownJump;
     private bool canJump;
     private int jumpSituation;
-        // 1=> começou a subir
-        // 2=> no ápice do pulo
-        // 3=> começou a descer
-        // 4=> no chão
+    // 1=> começou a subir
+    // 2=> no ápice do pulo
+    // 3=> começou a descer
+    // 4=> no chão
 
 
     //dive
-    public int cooldownDive = 1;
+    private int cooldownDive = 12;
     private int currentCooldownDive;
     private bool canDive;
     private int diveSituation;
@@ -68,7 +63,7 @@ public class snake : MonoBehaviour
         // 4=> no chão
 
     //points
-    private int point;
+    public int point;
 
     //texts
     public Text scoreText;
@@ -79,18 +74,17 @@ public class snake : MonoBehaviour
     public AudioClip bite;
     public AudioClip getStar;
 	public AudioClip gulp;
-    public AudioSource audioSource;
-
-	public AudioClip music;
-	public AudioClip lacucaracha;
-	private bool badMusicIsPlaying;
+    public AudioClip music;
+    public AudioClip lacucaracha;
+    private bool badMusicIsPlaying;
+    AudioSource audioSource;
 
     // Use this for initialization
     void Start()
     {
         x = y = 0;
         z = 1;
-        time = startTime;
+        time = 0.3f;
         currentMoviment = "pZ";
         numParts = 4;
         moviments = new List<string>();
@@ -101,13 +95,10 @@ public class snake : MonoBehaviour
         dragDistance = Screen.height * 15 / 100; //dragDistance is 15% height of the screen
 
         audioSource = GetComponent<AudioSource>();
-		audioSource.clip = music;
-		audioSource.Play ();
+        audioSource.clip = music;
+        audioSource.Play();
 
-		badMusicIsPlaying = false;
-
-        //GetComponent<AudioSource>().playOnAwake = false;
-        // GetComponent<AudioSource>().clip = bite;
+        badMusicIsPlaying = false;
 
         setCanJump();
         setCanDive();
@@ -343,7 +334,6 @@ public class snake : MonoBehaviour
             GameObject body = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             body.transform.position = new Vector3(bx, by, bz);
             body.transform.localScale = new Vector3(0.9f, 1f, 0.9f);
-            body.tag = "body";
             body.GetComponent<Renderer>().material = rend;
             Destroy(body, time * numParts);
 
@@ -415,6 +405,7 @@ public class snake : MonoBehaviour
             transform.position = new Vector3(x, y, z);
             body.AddComponent<Rigidbody>();
             body.GetComponent<Rigidbody>().useGravity = false;
+            body.tag = "body";
         }
     }
 
@@ -446,40 +437,36 @@ public class snake : MonoBehaviour
     {
         if (collision.gameObject.tag == "apple")
         {
-			if (appleSpawn.eatsBadApple) 
-			{
-				audioSource.Stop ();
-				audioSource.clip = lacucaracha;
-				audioSource.Play();
-				badMusicIsPlaying = true;
+            if (appleSpawn.eatsBadApple)
+            {
+                audioSource.Stop();
+                audioSource.clip = lacucaracha;
+                audioSource.Play();
+                badMusicIsPlaying = true;
 
-				audioSource.PlayOneShot (gulp, 1f);
-			} 
-			else 
-			{
-				if (badMusicIsPlaying) 
-				{
-					audioSource.Stop ();
-					audioSource.clip = music;
-					audioSource.Play();
-					badMusicIsPlaying = false;
-				}
+                audioSource.PlayOneShot(gulp, 1f);
+            }
+            else
+            {
+                if (badMusicIsPlaying)
+                {
+                    audioSource.Stop();
+                    audioSource.clip = music;
+                    audioSource.Play();
+                    badMusicIsPlaying = false;
+                }
 
-				audioSource.PlayOneShot(bite, 1f);
-			}
-				
+                audioSource.PlayOneShot(bite, 1f);
+
+            }
+			
             numParts +=2;
             point+=2;
-            currentDifficulty += 1.0f / difficultyStep;
-            if (currentDifficulty > 1.0f)
-                currentDifficulty = 1.0f;
-            time = Mathf.Lerp(startTime, minTime, difficulty.Evaluate(currentDifficulty));
-        } 
-		else if (collision.gameObject.tag == "star")
+        } else if (collision.gameObject.tag == "star")
         {
             audioSource.PlayOneShot(getStar, 1f);
             numParts += 3;
-            point += 7;
+            point += 8;
         }
         else if (collision.gameObject.tag == "wall" || collision.gameObject.tag == "body")
         {
