@@ -437,7 +437,7 @@ public class snake : MonoBehaviour
     {
         if (collision.gameObject.tag == "apple")
         {
-            if (appleSpawn.eatsBadApple)
+			if (appleSpawn.nextAppleIsBad)
             {
                 audioSource.Stop();
                 audioSource.clip = lacucaracha;
