@@ -196,10 +196,6 @@ public class snake : MonoBehaviour
 				else
 					MoveDown();
             }
-            if (Input.GetKeyDown(KeyCode.G)) // GROW => FOR DEV
-            {
-                numParts += 5;
-            }
 #endif
         } else
         {
