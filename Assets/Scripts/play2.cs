@@ -92,6 +92,8 @@ public class play2 : MonoBehaviour
         numParts = 4;
         moviments = new List<string>();
 
+        
+
         point = 0;
         setScoreText();
 
@@ -444,6 +446,7 @@ public class play2 : MonoBehaviour
             {
                 audioSource.Stop();
                 audioSource.clip = lacucaracha;
+                audioSource.loop = true;
                 audioSource.Play();
                 badMusicIsPlaying = true;
 
@@ -455,6 +458,7 @@ public class play2 : MonoBehaviour
                 {
                     audioSource.Stop();
                     audioSource.clip = music;
+                    audioSource.loop = true;
                     audioSource.Play();
                     badMusicIsPlaying = false;
                 }

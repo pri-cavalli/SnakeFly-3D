@@ -444,6 +444,7 @@ public class play1 : MonoBehaviour
             {
                 audioSource.Stop();
                 audioSource.clip = lacucaracha;
+                audioSource.loop = true;
                 audioSource.Play();
                 badMusicIsPlaying = true;
 
@@ -455,6 +456,7 @@ public class play1 : MonoBehaviour
                 {
                     audioSource.Stop();
                     audioSource.clip = music;
+                    audioSource.loop = true;
                     audioSource.Play();
                     badMusicIsPlaying = false;
                 }

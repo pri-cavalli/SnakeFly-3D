@@ -437,6 +437,7 @@ public class snake : MonoBehaviour
             {
                 audioSource.Stop();
                 audioSource.clip = lacucaracha;
+                audioSource.loop = true;
                 audioSource.Play();
                 badMusicIsPlaying = true;
 
@@ -448,6 +449,7 @@ public class snake : MonoBehaviour
                 {
                     audioSource.Stop();
                     audioSource.clip = music;
+                    audioSource.loop = true;
                     audioSource.Play();
                     badMusicIsPlaying = false;
                 }

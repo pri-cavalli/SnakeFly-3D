@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/multiplay.unity
+- path: Assets/Scenes/menu-instructions.unity
   isLoaded: 1
   isActive: 1
